@@ -9,5 +9,5 @@ import (
 func main() {
 	r := routes.GetRoutes()
 
-	http.ListenAndServe(":80", r)
+	http.ListenAndServe(":8001", r)
 }

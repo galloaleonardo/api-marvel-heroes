@@ -8,7 +8,7 @@ import (
 func GetRoutes() *mux.Router {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/", controllers.GetAllHeroes)
+	r.HandleFunc("/heroes", controllers.Heroes)
 
 	return r
 }

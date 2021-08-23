@@ -1,9 +1,18 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
+
+	"github.com/galloaleonardo/api-marvel-heroes/services"
 )
 
-func GetAllHeroes(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Testing"))
+func Heroes(w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+
+	heroes := services.Heroes(params)
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(heroes)
 }

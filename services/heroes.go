@@ -1,29 +1,105 @@
 package services
 
 import (
-	"encoding/csv"
-	"log"
-	"os"
+	"net/url"
+	"strconv"
+	"strings"
+
+	"github.com/galloaleonardo/api-marvel-heroes/helpers"
+	"github.com/galloaleonardo/api-marvel-heroes/structs"
 )
 
-const HEROES_DATA_PATH = "./data/heroes_information.csv"
-
-func ImportHeroesData() [][]string {
-	f, err := os.Open(HEROES_DATA_PATH)
+func importHeroes() []structs.Hero {
+	lines, err := helpers.ReadCsv()
 
 	if err != nil {
-		log.Fatal("Unable to read input file"+HEROES_DATA_PATH, err)
+		panic(err)
 	}
 
-	defer f.Close()
+	heroes := []structs.Hero{}
 
-	csvReader := csv.NewReader(f)
+	for _, line := range lines[1:] {
+		height, err := strconv.ParseFloat(line[6], 64)
 
-	records, err := csvReader.ReadAll()
+		if err != nil {
+			height = 0
+		}
 
-	if err != nil {
-		log.Fatal("Unable to parse file as CSV for"+HEROES_DATA_PATH, err)
+		width, err := strconv.ParseFloat(line[10], 64)
+
+		if err != nil {
+			width = 0
+		}
+
+		data := structs.Hero{
+			Name:      line[1],
+			Gender:    line[2],
+			EyeColor:  line[3],
+			Race:      line[4],
+			HairColor: line[5],
+			Height:    height,
+			Publisher: line[7],
+			SkinColor: line[8],
+			Alignment: line[9],
+			Width:     width,
+		}
+
+		heroes = append(heroes, data)
 	}
 
-	return records
+	return heroes
+}
+
+func Heroes(params url.Values) []structs.Hero {
+	heroes := importHeroes()
+
+	if len(params) != 0 {
+		var searched []structs.Hero
+
+		for k, v := range params {
+			if k == "name" {
+				for i := range heroes {
+					if strings.Contains(strings.ToLower(heroes[i].Name), strings.ToLower(strings.Join(v, ""))) {
+						searched = append(searched, heroes[i])
+					}
+				}
+			}
+
+			if k == "gender" {
+				for i := range heroes {
+					if strings.Contains(strings.ToLower(heroes[i].Gender), strings.ToLower(strings.Join(v, ""))) {
+						searched = append(searched, heroes[i])
+					}
+				}
+			}
+
+			if k == "eyeColor" {
+				for i := range heroes {
+					if strings.Contains(strings.ToLower(heroes[i].EyeColor), strings.ToLower(strings.Join(v, ""))) {
+						searched = append(searched, heroes[i])
+					}
+				}
+			}
+
+			if k == "race" {
+				for i := range heroes {
+					if strings.Contains(strings.ToLower(heroes[i].Race), strings.ToLower(strings.Join(v, ""))) {
+						searched = append(searched, heroes[i])
+					}
+				}
+			}
+
+			if k == "hairColor" {
+				for i := range heroes {
+					if strings.Contains(strings.ToLower(heroes[i].HairColor), strings.ToLower(strings.Join(v, ""))) {
+						searched = append(searched, heroes[i])
+					}
+				}
+			}
+		}
+
+		heroes = searched
+	}
+
+	return heroes
 }
