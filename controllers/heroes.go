@@ -16,3 +16,19 @@ func Heroes(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(heroes)
 }
+
+func MarvelHeroes(w http.ResponseWriter, r *http.Request) {
+	heroes := services.MarvelHeroes()
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(heroes)
+}
+
+func DCHeroes(w http.ResponseWriter, r *http.Request) {
+	heroes := services.DCHeroes()
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(heroes)
+}

@@ -50,56 +50,82 @@ func importHeroes() []structs.Hero {
 	return heroes
 }
 
-func Heroes(params url.Values) []structs.Hero {
-	heroes := importHeroes()
+func filterHeroes(params url.Values, heroes []structs.Hero) []structs.Hero {
+	var searched []structs.Hero
 
-	if len(params) != 0 {
-		var searched []structs.Hero
-
-		for k, v := range params {
-			if k == "name" {
-				for i := range heroes {
-					if strings.Contains(strings.ToLower(heroes[i].Name), strings.ToLower(strings.Join(v, ""))) {
-						searched = append(searched, heroes[i])
-					}
-				}
-			}
-
-			if k == "gender" {
-				for i := range heroes {
-					if strings.Contains(strings.ToLower(heroes[i].Gender), strings.ToLower(strings.Join(v, ""))) {
-						searched = append(searched, heroes[i])
-					}
-				}
-			}
-
-			if k == "eyeColor" {
-				for i := range heroes {
-					if strings.Contains(strings.ToLower(heroes[i].EyeColor), strings.ToLower(strings.Join(v, ""))) {
-						searched = append(searched, heroes[i])
-					}
-				}
-			}
-
-			if k == "race" {
-				for i := range heroes {
-					if strings.Contains(strings.ToLower(heroes[i].Race), strings.ToLower(strings.Join(v, ""))) {
-						searched = append(searched, heroes[i])
-					}
-				}
-			}
-
-			if k == "hairColor" {
-				for i := range heroes {
-					if strings.Contains(strings.ToLower(heroes[i].HairColor), strings.ToLower(strings.Join(v, ""))) {
-						searched = append(searched, heroes[i])
-					}
+	for k, v := range params {
+		if k == "name" {
+			for i := range heroes {
+				if strings.Contains(strings.ToLower(heroes[i].Name), strings.ToLower(strings.Join(v, ""))) {
+					searched = append(searched, heroes[i])
 				}
 			}
 		}
 
-		heroes = searched
+		if k == "gender" {
+			for i := range heroes {
+				if strings.Contains(strings.ToLower(heroes[i].Gender), strings.ToLower(strings.Join(v, ""))) {
+					searched = append(searched, heroes[i])
+				}
+			}
+		}
+
+		if k == "race" {
+			for i := range heroes {
+				if strings.Contains(strings.ToLower(heroes[i].Race), strings.ToLower(strings.Join(v, ""))) {
+					searched = append(searched, heroes[i])
+				}
+			}
+		}
+
+		if k == "hairColor" {
+			for i := range heroes {
+				if strings.Contains(strings.ToLower(heroes[i].HairColor), strings.ToLower(strings.Join(v, ""))) {
+					searched = append(searched, heroes[i])
+				}
+			}
+		}
+
+		if k == "publisher" {
+			for i := range heroes {
+				if strings.Contains(strings.ToLower(heroes[i].Publisher), strings.ToLower(strings.Join(v, ""))) {
+					searched = append(searched, heroes[i])
+				}
+			}
+		}
 	}
+
+	return searched
+}
+
+func Heroes(params url.Values) []structs.Hero {
+	heroes := importHeroes()
+
+	if len(params) != 0 {
+		heroes = filterHeroes(params, heroes)
+	}
+
+	return heroes
+}
+
+func MarvelHeroes() []structs.Hero {
+	heroes := importHeroes()
+
+	params := url.Values{}
+
+	params.Add("publisher", "Marvel Comics")
+	heroes = filterHeroes(params, heroes)
+
+	return heroes
+}
+
+func DCHeroes() []structs.Hero {
+	heroes := importHeroes()
+
+	params := url.Values{}
+
+	params.Add("publisher", "DC Comics")
+	heroes = filterHeroes(params, heroes)
 
 	return heroes
 }
